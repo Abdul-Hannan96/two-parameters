@@ -1,5 +1,53 @@
 ---
 title: "Untitled"
 format: html
+execute: 
+  echo: false
+
 ---
 
+$$
+Y = \beta_0 + \beta_1 X_1 + \beta_2 X_2 + \cdots + \beta_n X_n + \epsilon
+$$
+
+with $\epsilon \sim \mathcal{N}(0, \sigma^2)$
+
+This is the general form of a **linear regression model**.
+
+- **Y** is the **outcome variable** we want to predict — in this case, height.
+- **X₁, X₂, ..., Xₙ** are the **predictor variables** (also called covariates) like sex or age.
+- **β₀** is the **intercept**, the expected value of Y when all X’s are 0.
+- **β₁, β₂, ..., βₙ** are the **coefficients** that show how much each predictor contributes to Y.
+- **ε** (epsilon) is the **error term**, representing variation not explained by the model. It is assumed to follow a normal distribution with mean 0 and variance σ².
+
+This model helps us understand how different variables are related
+
+
+with $\epsilon \sim \mathcal{N}(0, \sigma^2)$
+
+```{r}
+#| message: false
+library(tidyverse)
+library(primer.data)
+library(tidymodels)
+library(broom)
+
+
+```
+
+```{r}
+set.seed(10)
+
+x <- nhanes |>
+  filter(age >= 18 & age <= 27) |>
+  select(height, sex) |>
+  drop_na() |>
+  slice_sample(n = 50)
+
+```
+
+## 📝 Summary of Analysis
+
+Height is an important physical measurement that varies among individuals and may differ by sex.  
+Using data from the **NHANES** survey, which includes a range of physical attributes for individuals aged 18–27, we aim to compare the average height between **male** and **female** recruits.
+One potential limitation is that our data may not fully represent the future recruit population, which could bias our height estimates.
