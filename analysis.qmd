@@ -1,29 +1,43 @@
 ---
-title: "Untitled"
+title: "Predicted Heights by Sex"
 format: html
 execute: 
   echo: false
+  warning: false
+  message: false
+---
+
+## 📊 Statistical Model
+
+We use a **linear regression model** to estimate height differences between male and female recruits.
+
+$$
+Y = \beta_0 + \beta_1 X_1 + \cdots + \beta_n X_n + \epsilon
+$$
+
+with $\epsilon \sim \mathcal{N}(0, \sigma^2)$
+
+This model assumes:
+
+- **Y** = outcome variable (height)  
+- **X₁, X₂, ..., Xₙ** = predictor variables (e.g., sex)  
+- **β₀** = intercept (mean height for reference group)  
+- **β₁, ..., βₙ** = effect of each predictor  
+- **ε** = error not explained by predictors  
 
 ---
 
+## 🧪 Data Generating Mechanism
+
+We model the relationship using:
+
 $$
-Y = \beta_0 + \beta_1 X_1 + \beta_2 X_2 + \cdots + \beta_n X_n + \epsilon
+\hat{\text{height}} = 162.18 + 15.94 \cdot \text{sexMale}
 $$
 
-with $\epsilon \sim \mathcal{N}(0, \sigma^2)$
+This means males are predicted to be approximately 16 cm taller than females.
 
-This is the general form of a **linear regression model**.
-
-- **Y** is the **outcome variable** we want to predict — in this case, height.
-- **X₁, X₂, ..., Xₙ** are the **predictor variables** (also called covariates) like sex or age.
-- **β₀** is the **intercept**, the expected value of Y when all X’s are 0.
-- **β₁, β₂, ..., βₙ** are the **coefficients** that show how much each predictor contributes to Y.
-- **ε** (epsilon) is the **error term**, representing variation not explained by the model. It is assumed to follow a normal distribution with mean 0 and variance σ².
-
-This model helps us understand how different variables are related
-
-
-with $\epsilon \sim \mathcal{N}(0, \sigma^2)$
+---
 
 ```{r}
 #| message: false
@@ -31,9 +45,12 @@ library(tidyverse)
 library(primer.data)
 library(tidymodels)
 library(broom)
-
-
+library(easystats)
+library(parsnip)
+library(marginaleffects)
+library(knitr)
 ```
+
 
 ```{r}
 set.seed(10)
@@ -46,8 +63,56 @@ x <- nhanes |>
 
 ```
 
-## 📝 Summary of Analysis
 
-Height is an important physical measurement that varies among individuals and may differ by sex.  
-Using data from the **NHANES** survey, which includes a range of physical attributes for individuals aged 18–27, we aim to compare the average height between **male** and **female** recruits.
-One potential limitation is that our data may not fully represent the future recruit population, which could bias our height estimates.
+```{r}
+#| cache: true
+
+fit_height <- linear_reg() |>
+  fit(height ~ sex, data = x)
+
+tidy(fit_height, conf.int = TRUE) |>
+  select(term, estimate, conf.low, conf.high) |>
+  kable(
+    caption = "Estimates and 95% Confidence Intervals for Parameters  
+    Source: NHANES 2009–2011"
+  )
+
+```
+
+📈 Predicted Heights by Sex
+
+```{r}
+plot_predictions(fit_height, 
+                 condition = "sex",
+                 draw = FALSE) |> 
+  ggplot(aes(x = sex, 
+             y = estimate, 
+             color = sex)) +
+  geom_pointrange(aes(ymin = conf.low, ymax = conf.high),
+                  size = 1.2, linewidth = 1.5, fatten = 3) +
+  scale_color_manual(values = c("Female" = "#E74C3C", "Male" = "#3498DB")) +
+  labs(
+    title = "Predicted Height for Male and Female Recruits",
+    subtitle = "Males are predicted to be ~16 cm taller than females",
+    caption = "Source: USMC Simulated Height Data",
+    x = "Sex",
+    y = "Height (cm)",
+    color = "Sex"
+  ) +
+  theme_minimal() +
+  theme(legend.position = "none")
+
+```
+
+📝 **Summary of Analysis**
+
+- Height is an important physical measurement that varies among individuals and may differ by sex.
+
+- Using data from the NHANES survey (ages 18–27), we compare the average height between male and female recruits.
+
+- One limitation is that this sample may not fully represent future recruit populations.
+
+- We model average height — a continuous variable — as a linear function of sex, a binary variable.
+
+✅ Result: The average predicted height for male recruits is about 178 cm, with a 95% confidence interval from 175 to 181 cm.
+

@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Untitled</title>
+<title>Predicted Heights by Sex</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -75,7 +75,7 @@ window.Quarto = {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Untitled</h1>
+<h1 class="title">Predicted Heights by Sex</h1>
 </div>
 
 
@@ -92,24 +92,83 @@ window.Quarto = {
 </header>
 
 
+<section id="statistical-model" class="level2">
+<h2 class="anchored" data-anchor-id="statistical-model">📊 Statistical Model</h2>
+<p>We use a <strong>linear regression model</strong> to estimate height differences between male and female recruits.</p>
 <p><span class="math display">\[
-Y = \beta_0 + \beta_1 X_1 + \beta_2 X_2 + \cdots + \beta_n X_n + \epsilon
+Y = \beta_0 + \beta_1 X_1 + \cdots + \beta_n X_n + \epsilon
 \]</span></p>
 <p>with <span class="math inline">\(\epsilon \sim \mathcal{N}(0, \sigma^2)\)</span></p>
-<p>This is the general form of a <strong>linear regression model</strong>.</p>
+<p>This model assumes:</p>
 <ul>
-<li><strong>Y</strong> is the <strong>outcome variable</strong> we want to predict — in this case, height.</li>
-<li><strong>X₁, X₂, …, Xₙ</strong> are the <strong>predictor variables</strong> (also called covariates) like sex or age.</li>
-<li><strong>β₀</strong> is the <strong>intercept</strong>, the expected value of Y when all X’s are 0.</li>
-<li><strong>β₁, β₂, …, βₙ</strong> are the <strong>coefficients</strong> that show how much each predictor contributes to Y.</li>
-<li><strong>ε</strong> (epsilon) is the <strong>error term</strong>, representing variation not explained by the model. It is assumed to follow a normal distribution with mean 0 and variance σ².</li>
+<li><strong>Y</strong> = outcome variable (height)<br>
+</li>
+<li><strong>X₁, X₂, …, Xₙ</strong> = predictor variables (e.g., sex)<br>
+</li>
+<li><strong>β₀</strong> = intercept (mean height for reference group)<br>
+</li>
+<li><strong>β₁, …, βₙ</strong> = effect of each predictor<br>
+</li>
+<li><strong>ε</strong> = error not explained by predictors</li>
 </ul>
-<p>This model helps us understand how different variables are related</p>
-<p>with <span class="math inline">\(\epsilon \sim \mathcal{N}(0, \sigma^2)\)</span></p>
-<section id="summary-of-analysis" class="level2">
-<h2 class="anchored" data-anchor-id="summary-of-analysis">📝 Summary of Analysis</h2>
-<p>Height is an important physical measurement that varies among individuals and may differ by sex.<br>
-Using data from the <strong>NHANES</strong> survey, which includes a range of physical attributes for individuals aged 18–27, we aim to compare the average height between <strong>male</strong> and <strong>female</strong> recruits. One potential limitation is that our data may not fully represent the future recruit population, which could bias our height estimates.</p>
+<hr>
+</section>
+<section id="data-generating-mechanism" class="level2">
+<h2 class="anchored" data-anchor-id="data-generating-mechanism">🧪 Data Generating Mechanism</h2>
+<p>We model the relationship using:</p>
+<p><span class="math display">\[
+\hat{\text{height}} = 162.18 + 15.94 \cdot \text{sexMale}
+\]</span></p>
+<p>This means males are predicted to be approximately 16 cm taller than females.</p>
+<hr>
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Estimates and 95% Confidence Intervals for Parameters<br>
+Source: NHANES 2009–2011</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">term</th>
+<th style="text-align: right;">estimate</th>
+<th style="text-align: right;">conf.low</th>
+<th style="text-align: right;">conf.high</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">(Intercept)</td>
+<td style="text-align: right;">162.17778</td>
+<td style="text-align: right;">159.7216</td>
+<td style="text-align: right;">164.63394</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">sexMale</td>
+<td style="text-align: right;">15.93961</td>
+<td style="text-align: right;">12.3182</td>
+<td style="text-align: right;">19.56102</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>📈 Predicted Heights by Sex</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="analysis_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>📝 <strong>Summary of Analysis</strong></p>
+<ul>
+<li><p>Height is an important physical measurement that varies among individuals and may differ by sex.</p></li>
+<li><p>Using data from the NHANES survey (ages 18–27), we compare the average height between male and female recruits.</p></li>
+<li><p>One limitation is that this sample may not fully represent future recruit populations.</p></li>
+<li><p>We model average height — a continuous variable — as a linear function of sex, a binary variable.</p></li>
+</ul>
+<p>✅ Result: The average predicted height for male recruits is about 178 cm, with a 95% confidence interval from 175 to 181 cm.</p>
 </section>
 
 </main>
